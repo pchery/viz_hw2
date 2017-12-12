@@ -19,10 +19,10 @@ Table vwnd;
 // map and pick out the subset that corresponds to the range from
 // 135W to 65W, and from 55N to 25N
 PImage img;
+float step = 0.1;
 
 int NUM_PARTICLES = 200;
 int MAX_LIFETIME = 200;
-//Map<PVector, Integer> particles = new HashMap<PVector, Integer>();
 List<PVector> particles = new ArrayList();
 
 void setup() {
@@ -49,8 +49,13 @@ void draw() {
   strokeWeight(5);
   beginShape(POINTS);
   for(PVector v: particles){
-    vertex(v.x, v.y);
-    v.set(v.x,v.y, v.z - 1);
+    //Euler method
+    float pos_x = v.x + step*readInterp(uwnd, v.x* uwnd.getColumnCount() / width, v.y* uwnd.getRowCount() / height);
+    float pos_y = v.y - step*readInterp(vwnd, v.x* uwnd.getColumnCount() / width, v.y* uwnd.getRowCount() / height);
+    vertex(pos_x, pos_y);
+    //RK4
+    //vertex(v.x, v.y);
+    v.set(pos_x,pos_y, v.z - 1);
     if(v.z <= 0){
       v.set(random(width), random(height), random(MAX_LIFETIME));
     }
@@ -78,7 +83,25 @@ float readInterp(Table tab, float a, float b) {
   int x = int(a);
   int y = int(b);
   // TODO: do bilinear interpolation
-  return readRaw(tab, x, y);
+  float Q11 = readRaw(tab, x, y);
+  float Q12 = readRaw(tab, x, y+1);
+  float Q21 = readRaw(tab, x + 1, y);
+  float Q22 = readRaw(tab, x + 1, y + 1);
+  
+  //interpolation in x dir
+  float x1 = (x + 1 - a)*Q11 +(a - x)*Q21;
+  float x2 = (x + 1 - a)*Q12 + (a - x)*Q22;
+  
+  //interpolation in y dir
+  return (y + 1 - b)*x1 + (b - y)*x2;
+  //float start = readRaw(tab, x, y);
+  //float end;
+  ////Euler method 
+  //for(int i = 0; i < ; i+= step){
+  //  end += step*start;
+  //  start = end;
+  //}
+  //return readRaw(tab, x, y);
 }
 
 // Reads a raw value 
