@@ -49,12 +49,18 @@ void draw() {
   strokeWeight(5);
   beginShape(POINTS);
   for(PVector v: particles){
+    float pos_x, pos_y;
     //Euler method
-    float pos_x = v.x + step*readInterp(uwnd, v.x* uwnd.getColumnCount() / width, v.y* uwnd.getRowCount() / height);
-    float pos_y = v.y - step*readInterp(vwnd, v.x* uwnd.getColumnCount() / width, v.y* uwnd.getRowCount() / height); //moving up in this context correlates to decreasing the y-position
-    vertex(pos_x, pos_y);
+    //pos_x = v.x + step*readInterp(uwnd, v.x* uwnd.getColumnCount() / width, v.y* uwnd.getRowCount() / height);
+    //moving up in this context correlates to decreasing the y-position
+    //pos_y = v.y - step*readInterp(vwnd, v.x* vwnd.getColumnCount() / width, v.y* vwnd.getRowCount() / height);
+    
     //RK4
-    //vertex(v.x, v.y);
+    float[]  k = computeRK4Values(uwnd, v);
+    pos_x = v.x + (step/6)*(k[0]+(2*k[1])+(2*k[2])+k[3]);
+    k = computeRK4Values(vwnd, v);
+    pos_y = v.y - (step/6)*(k[0]+(2*k[1])+(2*k[2])+k[3]);
+    vertex(pos_x, pos_y);
     v.set(pos_x,pos_y, v.z - 1);
     if(v.z <= 0){
       v.set(random(width), random(height), random(MAX_LIFETIME));
@@ -123,4 +129,13 @@ float readRaw(Table tab, int x, int y) {
     y = tab.getRowCount() - 1;
   }
   return tab.getFloat(y,x);
+}
+
+float[] computeRK4Values(Table tab, PVector v) {
+  float[] k = new float[4];
+  k[0] = readInterp(tab, v.x* tab.getColumnCount() / width, v.y* tab.getRowCount() / height);
+  k[1] = readInterp(tab, (v.x* tab.getColumnCount() / width)+(step/2), (v.y* tab.getRowCount() / height)+(step*(k[0]/2)));
+  k[2] = readInterp(tab, (v.x* tab.getColumnCount() / width)+(step/2), (v.y* tab.getRowCount() / height)+(step*(k[1]/2)));
+  k[3] = readInterp(tab, (v.x* tab.getColumnCount() / width)+step, (v.y* tab.getRowCount() / height)+(step*k[2]));
+  return k;
 }
