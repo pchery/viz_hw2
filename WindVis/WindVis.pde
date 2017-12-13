@@ -51,7 +51,7 @@ void draw() {
   for(PVector v: particles){
     //Euler method
     float pos_x = v.x + step*readInterp(uwnd, v.x* uwnd.getColumnCount() / width, v.y* uwnd.getRowCount() / height);
-    float pos_y = v.y - step*readInterp(vwnd, v.x* uwnd.getColumnCount() / width, v.y* uwnd.getRowCount() / height);
+    float pos_y = v.y - step*readInterp(vwnd, v.x* uwnd.getColumnCount() / width, v.y* uwnd.getRowCount() / height); //moving up in this context correlates to decreasing the y-position
     vertex(pos_x, pos_y);
     //RK4
     //vertex(v.x, v.y);
@@ -80,20 +80,24 @@ void drawMouseLine() {
 // Reads a bilinearly-interpolated value at the given a and b
 // coordinates.  Both a and b should be in data coordinates.
 float readInterp(Table tab, float a, float b) {
-  int x = int(a);
-  int y = int(b);
+  int x1 = int(a);
+  int y1 = int(b);
+  int x2 = x1 + 1;
+  int y2 = y1 + 1;
   // TODO: do bilinear interpolation
-  float Q11 = readRaw(tab, x, y);
-  float Q12 = readRaw(tab, x, y+1);
-  float Q21 = readRaw(tab, x + 1, y);
-  float Q22 = readRaw(tab, x + 1, y + 1);
+  float Q11 = readRaw(tab, x1, y1);
+  float Q12 = readRaw(tab, x1, y2);
+  float Q21 = readRaw(tab, x2, y1);
+  float Q22 = readRaw(tab, x2, y2);
   
   //interpolation in x dir
-  float x1 = (x + 1 - a)*Q11 +(a - x)*Q21;
-  float x2 = (x + 1 - a)*Q12 + (a - x)*Q22;
-  
+  float fXY1 = (x2 - a)*Q11 + (a - x1)*Q21;
+  float fXY2 = (x2 - a)*Q12 + (a - x1)*Q22;
   //interpolation in y dir
-  return (y + 1 - b)*x1 + (b - y)*x2;
+  float fXY =  (y2 - b)*fXY1 + (b - y1)*fXY2;
+  
+  return fXY;
+  
   //float start = readRaw(tab, x, y);
   //float end;
   ////Euler method 
