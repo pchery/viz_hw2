@@ -21,7 +21,7 @@ Table vwnd;
 PImage img;
 float step = 0.1;
 
-int NUM_PARTICLES = 200;
+int NUM_PARTICLES = 3000;
 int MAX_LIFETIME = 200;
 List<PVector> particles = new ArrayList();
 
@@ -46,7 +46,7 @@ void draw() {
   image(img, 0, 0, width, height);
   drawMouseLine();
   
-  strokeWeight(5);
+  strokeWeight(3);
   beginShape(POINTS);
   for(PVector v: particles){
     float pos_x, pos_y;
@@ -103,15 +103,6 @@ float readInterp(Table tab, float a, float b) {
   float fXY =  (y2 - b)*fXY1 + (b - y1)*fXY2;
   
   return fXY;
-  
-  //float start = readRaw(tab, x, y);
-  //float end;
-  ////Euler method 
-  //for(int i = 0; i < ; i+= step){
-  //  end += step*start;
-  //  start = end;
-  //}
-  //return readRaw(tab, x, y);
 }
 
 // Reads a raw value 
@@ -134,8 +125,11 @@ float readRaw(Table tab, int x, int y) {
 float[] computeRK4Values(Table tab, PVector v) {
   float[] k = new float[4];
   k[0] = readInterp(tab, v.x* tab.getColumnCount() / width, v.y* tab.getRowCount() / height);
-  k[1] = readInterp(tab, (v.x* tab.getColumnCount() / width)+(step/2), (v.y* tab.getRowCount() / height)+(step*(k[0]/2)));
-  k[2] = readInterp(tab, (v.x* tab.getColumnCount() / width)+(step/2), (v.y* tab.getRowCount() / height)+(step*(k[1]/2)));
-  k[3] = readInterp(tab, (v.x* tab.getColumnCount() / width)+step, (v.y* tab.getRowCount() / height)+(step*k[2]));
+  //k[1] = readInterp(tab, (v.x* tab.getColumnCount() / width)+(step/2), (v.y* tab.getRowCount() / height)+(step*(k[0]/2)));
+  //k[2] = readInterp(tab, (v.x* tab.getColumnCount() / width)+(step/2), (v.y* tab.getRowCount() / height)+(step*(k[1]/2)));
+  //k[3] = readInterp(tab, (v.x* tab.getColumnCount() / width)+step, (v.y* tab.getRowCount() / height)+(step*k[2]));
+  k[1] = readInterp(tab, (v.x+(step/2))* tab.getColumnCount() / width , (v.y + (step*(k[0]/2))) * tab.getRowCount() / height);
+  k[2] = readInterp(tab, (v.x + (step/2))* tab.getColumnCount() / width, (v.y + (step*(k[1]/2)))* tab.getRowCount() / height);
+  k[3] = readInterp(tab, (v.x+step)* tab.getColumnCount() / width, (v.y +step*k[2]) * tab.getRowCount() / height);
   return k;
 }
