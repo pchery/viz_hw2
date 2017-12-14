@@ -4,7 +4,7 @@
 
 ## Visualization parameters:
 **Number of particles: 3000** <br/>
-With a stroke weight of 3, 3000 particles shows enough particle to get an understanding of the direction of most of the vectors in the vector field. A lower number of particles does not provide enough information while a higher number of particles leads to visual clutter. 
+With a stroke weight of three, 3000 particles shows enough particle to get an understanding of the direction of most of the vectors in the vector field. A lower number of particles does not provide enough information while a higher number of particles leads to visual clutter. 
 
 **Particle lifetime: 200**  <br/>
 A lifetime of 200 gives enough time for particles to get stuck in some of the vortices or points where the wind vectors are near zero. A smaller lifetime is not enough time for particles to get trapped in these features and thus does not appropriately portray the vector field. A greater lifetime leads to too much visual clutter to see where the particles are heading. 
