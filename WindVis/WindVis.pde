@@ -90,7 +90,7 @@ float readInterp(Table tab, float a, float b) {
   int y1 = int(b);
   int x2 = x1 + 1;
   int y2 = y1 + 1;
-  // TODO: do bilinear interpolation
+  // bilinear interpolation
   float Q11 = readRaw(tab, x1, y1);
   float Q12 = readRaw(tab, x1, y2);
   float Q21 = readRaw(tab, x2, y1);
