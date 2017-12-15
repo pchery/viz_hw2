@@ -125,9 +125,6 @@ float readRaw(Table tab, int x, int y) {
 float[] computeRK4Values(Table tab, PVector v) {
   float[] k = new float[4];
   k[0] = readInterp(tab, v.x* tab.getColumnCount() / width, v.y* tab.getRowCount() / height);
-  //k[1] = readInterp(tab, (v.x* tab.getColumnCount() / width)+(step/2), (v.y* tab.getRowCount() / height)+(step*(k[0]/2)));
-  //k[2] = readInterp(tab, (v.x* tab.getColumnCount() / width)+(step/2), (v.y* tab.getRowCount() / height)+(step*(k[1]/2)));
-  //k[3] = readInterp(tab, (v.x* tab.getColumnCount() / width)+step, (v.y* tab.getRowCount() / height)+(step*k[2]));
   k[1] = readInterp(tab, (v.x+(step/2))* tab.getColumnCount() / width , (v.y + (step*(k[0]/2))) * tab.getRowCount() / height);
   k[2] = readInterp(tab, (v.x + (step/2))* tab.getColumnCount() / width, (v.y + (step*(k[1]/2)))* tab.getRowCount() / height);
   k[3] = readInterp(tab, (v.x+step)* tab.getColumnCount() / width, (v.y +step*k[2]) * tab.getRowCount() / height);
